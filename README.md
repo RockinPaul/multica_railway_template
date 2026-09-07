@@ -16,7 +16,7 @@ This repo holds only what Railway needs: two one-line Dockerfiles over the upstr
 2. No email provider is configured by default, so the backend prints the code to its log:
 
    ```
-   railway logs --service backend | grep "Verification code"
+   railway logs --service backend --filter "Verification code"
    ```
 
    or Railway dashboard, `backend` service, Logs. Enter the code.
@@ -50,6 +50,7 @@ Leave both empty on the default domains.
 ## How it fits together
 
 - `REMOTE_API_URL=http://backend.railway.internal:8080` is where the frontend proxies to. Cookies stay on one origin, so the backend's `CORS_ALLOWED_ORIGINS` is only a safety net.
+- `DOCS_URL=https://multica.ai` is where the frontend sends `/docs` requests. It is read at runtime, so changing it needs no rebuild.
 - `backend` reads `DATABASE_URL` from `${{pgvector.*}}` references. `JWT_SECRET`, `REALTIME_METRICS_TOKEN`, and `POSTGRES_PASSWORD` are generated per deploy.
 - `LOCAL_UPLOAD_DIR=/app/data/uploads` is the backend volume; `LOCAL_UPLOAD_BASE_URL` is the backend's public domain so attachment links resolve.
 - `ANALYTICS_DISABLED=true` turns off upstream telemetry.

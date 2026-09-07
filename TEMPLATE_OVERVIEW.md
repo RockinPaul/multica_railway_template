@@ -27,7 +27,7 @@ Hosting Multica on Railway means three services. `frontend` runs the Next.js web
 
 ### Implementation Details
 
-- `frontend`: `ghcr.io/multica-ai/multica-web:v0.4.41`, healthcheck `/`, public domain. Proxies `/api`, `/auth`, `/uploads`, and `/health` to the backend over the private network, so the browser only ever talks to the frontend domain.
+- `frontend`: `ghcr.io/multica-ai/multica-web:v0.4.41`, healthcheck `/`, public domain. Proxies `/api`, `/auth`, `/uploads`, `/v1`, `/health`, and the `/ws` WebSocket to the backend over the private network, so the browser only ever talks to the frontend domain.
 - `backend`: `ghcr.io/multica-ai/multica-backend:v0.4.41`, healthcheck `/readyz`, public domain (the CLI daemon connects here), volume at `/app/data/uploads`. Runs `migrate up` before serving.
 - `pgvector`: `pgvector/pgvector:pg17`, volume at `/var/lib/postgresql/data`.
 
