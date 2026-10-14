@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-10 — Multica v0.6.2
+
+- `backend` runs `ghcr.io/multica-ai/multica-backend:v0.6.2` and `frontend` runs `ghcr.io/multica-ai/multica-web:v0.6.2` (both were v0.4.41).
+- Security fixes since v0.4.41 include Next.js advisories in the web image, upgraded Alpine OpenSSL packages, and a channel fix that refuses an inbound turn from a member who may not run the agent.
+- **Telemetry stays off.** v0.4.44 added a daily anonymous deployment snapshot to `telemetry.multica.ai`, on by default, that `ANALYTICS_DISABLED` does not cover. `Dockerfile` now sets `DO_NOT_TRACK=true`, so it stays off on new and existing deployments. Set `DO_NOT_TRACK=false` on `backend` to opt in.
+- New optional backend variables, all off when unset: `DISABLE_WORKSPACE_CREATION`, `REDIS_URL`, `MULTICA_LLM_DISABLE_THINKING`, and the DingTalk and Telegram integration keys. See upstream's `SELF_HOSTING_ADVANCED.md`.
+
+### Upgrading an existing deployment
+
+Your data stays. **Back up `pgvector` first**: the new `backend` applies 119 forward-only migrations on its first start (up to `572_channel_typing_abandoned_idx`; about a second on a small database). Rolling back the deployment does not undo them. The old v0.4.41 backend still starts against the migrated database and reports `/readyz` ok, so a rollback looks healthy while it runs against a schema it does not know; a real rollback means restoring the backup.
+
+1. Apply the update from Railway's banner. Both services redeploy; nothing compiles.
+2. Check `https://<backend-domain>/readyz` returns `{"status":"ok","checks":{"db":"ok","migrations":"ok"}}`. Existing sessions and personal access tokens stay valid because `JWT_SECRET` does not change.
+3. **Runtimes**: upgrade the Multica CLI on machines running the daemon (`brew upgrade multica`). The v0.6 daemon refuses OpenCode older than 1.1.54, because older builds leave a native module in the shared temp directory on every run until the disk fills; upgrade OpenCode on runtimes that use it.
+4. `ALLOW_SIGNUP=false` no longer stops a signed-in user from creating another workspace. Set `DISABLE_WORKSPACE_CREATION=true` on `backend` if you want that locked down too. Invited emails can now sign up while `ALLOW_SIGNUP=false`.
+
 ## 2026-09 — Multica v0.4.41 from upstream images
 
 **Read "Upgrading an existing deployment" below before applying this update.**

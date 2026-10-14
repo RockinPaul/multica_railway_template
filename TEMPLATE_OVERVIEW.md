@@ -1,6 +1,6 @@
 # Deploy and Host Multica on Railway
 
-Multica is an open-source platform for running AI agents as persistent teammates. Agents get issues assigned the way people do, execute on machines you control through the Multica CLI daemon, and report back in a Linear-style web app with boards, projects, and agent activity. This template deploys the upstream Multica v0.4.41 images together with PostgreSQL + pgvector on Railway.
+Multica is an open-source platform for running AI agents as persistent teammates. Agents get issues assigned the way people do, execute on machines you control through the Multica CLI daemon, and report back in a Linear-style web app with boards, projects, and agent activity. This template deploys the upstream Multica v0.6.2 images together with PostgreSQL + pgvector on Railway.
 
 ## About Hosting Multica
 
@@ -27,8 +27,8 @@ Hosting Multica on Railway means three services. `frontend` runs the Next.js web
 
 ### Implementation Details
 
-- `frontend`: `ghcr.io/multica-ai/multica-web:v0.4.41`, healthcheck `/`, public domain. Proxies `/api`, `/auth`, `/uploads`, `/v1`, `/health`, and the `/ws` WebSocket to the backend over the private network, so the browser only ever talks to the frontend domain.
-- `backend`: `ghcr.io/multica-ai/multica-backend:v0.4.41`, healthcheck `/readyz`, public domain (the CLI daemon connects here), volume at `/app/data/uploads`. Runs `migrate up` before serving.
+- `frontend`: `ghcr.io/multica-ai/multica-web:v0.6.2`, healthcheck `/`, public domain. Proxies `/api`, `/auth`, `/uploads`, `/v1`, `/health`, and the `/ws` WebSocket to the backend over the private network, so the browser only ever talks to the frontend domain.
+- `backend`: `ghcr.io/multica-ai/multica-backend:v0.6.2`, healthcheck `/readyz`, public domain (the CLI daemon connects here), volume at `/app/data/uploads`. Runs `migrate up` before serving.
 - `pgvector`: `pgvector/pgvector:pg17`, volume at `/var/lib/postgresql/data`.
 
 First login: open the frontend domain, enter your email, and read the code from the backend logs (`railway logs --service backend --filter "Verification code"`). If the instance is private, set `ALLOW_SIGNUP=false` or an `ALLOWED_EMAILS` / `ALLOWED_EMAIL_DOMAINS` allow-list afterwards.

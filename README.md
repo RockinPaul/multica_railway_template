@@ -4,8 +4,8 @@
 
 Railway template for [Multica](https://github.com/multica-ai/multica), the open-source platform for running AI agents as teammates on infrastructure you control. It deploys:
 
-- `frontend`: the Multica web app, from the upstream image `ghcr.io/multica-ai/multica-web:v0.4.41`
-- `backend`: the Multica API, realtime hub, and daemon hub, from `ghcr.io/multica-ai/multica-backend:v0.4.41`, with a volume for uploads
+- `frontend`: the Multica web app, from the upstream image `ghcr.io/multica-ai/multica-web:v0.6.2`
+- `backend`: the Multica API, realtime hub, and daemon hub, from `ghcr.io/multica-ai/multica-backend:v0.6.2`, with a volume for uploads
 - `pgvector`: PostgreSQL 17 with pgvector, on a volume
 
 This repo holds only what Railway needs: two one-line Dockerfiles over the upstream images plus docs. Multica itself is not vendored here. Product docs, the CLI reference, and the self-hosting guide live upstream at https://multica.ai/docs/self-host-quickstart.
@@ -38,7 +38,7 @@ The daemon connects to the `backend` public domain, not the frontend. That is wh
 
 ## Realtime and the two domains
 
-The browser talks only to `frontend`. The web image proxies `/api`, `/auth`, `/uploads`, `/v1`, `/health`, and the `/ws` WebSocket upgrade to the backend over Railway's private network, so live updates (boards, agent activity) work on the default `*.up.railway.app` domains. Verified on v0.4.41: an issue created through the API arrives as an event on a WebSocket opened through the frontend domain.
+The browser talks only to `frontend`. The web image proxies `/api`, `/auth`, `/uploads`, `/v1`, `/health`, and the `/ws` WebSocket upgrade to the backend over Railway's private network, so live updates (boards, agent activity) work on the default `*.up.railway.app` domains. Verified on v0.4.41 and again on v0.6.2: an issue created through the API arrives as an event on a WebSocket opened through the frontend domain.
 
 Two optional variables ship empty for setups where the browser should reach the backend host directly instead, for example the frontend and backend on subdomains of one domain you own (`app.example.com`, `api.example.com`):
 
@@ -53,7 +53,7 @@ Leave both empty on the default domains.
 - `DOCS_URL=https://multica.ai` is where the frontend sends `/docs` requests. It is read at runtime, so changing it needs no rebuild.
 - `backend` reads `DATABASE_URL` from `${{pgvector.*}}` references. `JWT_SECRET`, `REALTIME_METRICS_TOKEN`, and `POSTGRES_PASSWORD` are generated per deploy.
 - `LOCAL_UPLOAD_DIR=/app/data/uploads` is the backend volume; `LOCAL_UPLOAD_BASE_URL` is the backend's public domain so attachment links resolve.
-- `ANALYTICS_DISABLED=true` turns off upstream telemetry.
+- `ANALYTICS_DISABLED=true` turns off upstream product analytics, and `DO_NOT_TRACK=true` in `Dockerfile` turns off the daily anonymous deployment snapshot upstream added in v0.4.44. Set `DO_NOT_TRACK=false` on `backend` to send it.
 - Migrations run inside the backend container on every start (`migrate up`, forward-only). The `/readyz` healthcheck only passes once the database and migration state are both `ok`, so a failed migration keeps the previous deployment serving.
 
 ## Upgrading Multica
