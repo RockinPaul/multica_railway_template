@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-10-16 — Multica v0.6.3
+
+- `backend` and `frontend` run `ghcr.io/multica-ai/multica-backend:v0.6.3` and `multica-web:v0.6.3` (were v0.6.2).
+- **Security fix: removed members kept live updates.** On v0.6.2 a member removed from a workspace kept their open realtime connection and went on receiving that workspace's events. v0.6.3 closes their socket when they are removed and stops their notifications. Verified locally: on v0.6.2 a removed member's open socket received an issue created after the removal; on v0.6.3 the server closed the socket and the member's API requests to the workspace failed.
+- Also in this release: per-run cost and token details in the run log, project workflows (columns and handoffs), tasks that were claimed but never delivered to a daemon go back to the queue, and cache cleanup no longer deletes tracked folders such as `.next`. No new variables.
+
+### Upgrading an existing deployment
+
+Nothing to change. **Back up `pgvector` first**: `backend` applies ten forward-only migrations on its first start (`573_issue_workflow` to `582_issue_workflow_default_index`, under a second on a small database), and the v0.6.2 backend does not work correctly against the migrated schema (inviting a member failed in testing), so a rollback means restoring the backup. Verified locally with the template's variables: a v0.6.2 database with a workspace and an issue upgraded in place, `/readyz` reported ok, the existing session token still worked, the old issue was listed and new ones could be created. A fresh database on v0.6.3 migrates and works the same. The `frontend` image was not run here (its Dockerfile is unchanged upstream); check the web app loads after the update.
+
 ## 2026-10 — Multica v0.6.2
 
 - `backend` runs `ghcr.io/multica-ai/multica-backend:v0.6.2` and `frontend` runs `ghcr.io/multica-ai/multica-web:v0.6.2` (both were v0.4.41).

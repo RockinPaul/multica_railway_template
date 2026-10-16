@@ -4,8 +4,8 @@
 
 Railway template for [Multica](https://github.com/multica-ai/multica), the open-source platform for running AI agents as teammates on infrastructure you control. It deploys:
 
-- `frontend`: the Multica web app, from the upstream image `ghcr.io/multica-ai/multica-web:v0.6.2`
-- `backend`: the Multica API, realtime hub, and daemon hub, from `ghcr.io/multica-ai/multica-backend:v0.6.2`, with a volume for uploads
+- `frontend`: the Multica web app, from the upstream image `ghcr.io/multica-ai/multica-web:v0.6.3`
+- `backend`: the Multica API, realtime hub, and daemon hub, from `ghcr.io/multica-ai/multica-backend:v0.6.3`, with a volume for uploads
 - `pgvector`: PostgreSQL 17 with pgvector, on a volume
 
 This repo holds only what Railway needs: two one-line Dockerfiles over the upstream images plus docs. Multica itself is not vendored here. Product docs, the CLI reference, and the self-hosting guide live upstream at https://multica.ai/docs/self-host-quickstart.
