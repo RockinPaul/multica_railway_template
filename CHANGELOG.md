@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-11-02 — Multica v0.7.2
+
+- `backend` and `frontend` run `ghcr.io/multica-ai/multica-backend:v0.7.2` and `multica-web:v0.7.2` (were v0.6.3).
+- **Security fixes since v0.6.3:** machine credentials can no longer mint long-lived tokens; daemon routes enforce runtime ownership; task tokens are rejected for another workspace; private chat content stays with the session owner over realtime and REST; the web image moves to patched Node 22.23.4.
+- New optional variables, none required: `WORKSPACE_CREATION_ALLOWED_EMAILS` (only these addresses may create workspaces), `GOOGLE_ANALYTICS_ID` (off when empty), `MULTICA_WECOM_DEFAULT_LOCALE`. `DO_NOT_TRACK=true` still stops telemetry and stays baked in.
+- v0.7.2 refuses legacy DSH runtime profiles on the daemon and shows the bridge migration steps in its refusal notice.
+
+### Upgrading an existing deployment
+
+Nothing to change. **Back up `pgvector` first**: `backend` applies forward-only migrations on its first start, so a rollback to v0.6.3 means restoring the backup.
+
 ## 2026-10-16 — Multica v0.6.3
 
 - `backend` and `frontend` run `ghcr.io/multica-ai/multica-backend:v0.6.3` and `multica-web:v0.6.3` (were v0.6.2).
